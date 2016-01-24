@@ -15,6 +15,12 @@ body {
     font-size: 1.5em;
 }
 
+#guess,
+.drawerTag{
+    display : none;
+}
+
+
 h1 {
     background-color: #9ABBFF;
     margin:  0 0 20px 0;
@@ -45,9 +51,11 @@ canvas {
 <div id="main">
     <h1>Pictionary</h1>
     <div id="top-message">
-        <div id="guess" style="display: inline-block">
+        <div id="guess">
             Make a guess: <input type="text">
         </div>
+        <div class="drawerTag">You are the drawer! This is your word = <span></span></div>
     </div>
+    <div class="userGuesses"></div>
     <canvas id="canvas"></canvas>
 </div>
