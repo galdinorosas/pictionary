@@ -15,23 +15,28 @@ var drawerWord;
 
         
         totalUsers++;
-        if(totalUsers===1){
-            serverUserType = true;
-        }
-        else if(totalUsers === 2){
+        if(totalUsers>1){
             serverUserType = false;
         }
+        else{
+            serverUserType = true;
+        }
+
         
         socket.emit('userTypeCheck', serverUserType);
 
 
-        socket.on('drawerWordCheck', function(wordCheckObject){
-            if(wordCheckObject.type===true){
+        socket.on('clientToServerWordCheck', function(wordCheckObject){
+            if(wordCheckObject.drawer){
                 drawerWord=wordCheckObject.word;
-                return drawerWord;
+                console.log(wordCheckObject);
+                
             }
+            // console.log(wordCheckObject);
             
         });
+        
+
         
 
         
@@ -45,25 +50,30 @@ var drawerWord;
         
         socket.on('clientToServer', function(clientObject){
             socket.broadcast.emit('serverToClient', clientObject);
+
             
         });
         
         socket.on('guessToServer', function(message){
             
-            console.log(message);
+            // console.log(message);
             if(message.guess.toLowerCase()===drawerWord){
-                var serverToClientObject = {guess:message.guess,drawerWord:drawerWord};
-                console.log(serverToClientObject);
-                socket.emit('guessToClient', serverToClientObject);
-                socket.broadcast.emit('guessToClient', serverToClientObject);
-            };
+                var guessToClientObject = {guess:message.guess,word:drawerWord};
+                console.log(guessToClientObject);
+                // var drawerChange = false;
+                // socket.emit('guessToClient', guessToClientObject);
+                // socket.broadcast.emit('guessToClient', guessToClientObject);
+                io.sockets.emit('guessToClient', guessToClientObject);
+            }
+            else{
+
             socket.broadcast.emit('guessToClient', message);
+            }
+            
 
         });
         
 
-        
-        console.log(drawerWord);
         
         socket.on('disconnect', function(){
             totalUsers--;
