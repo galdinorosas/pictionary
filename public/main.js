@@ -6,6 +6,12 @@ var pictionary = function() {
     var userType;
     var initialGuess;
     var randomWord;
+    var ID;
+    
+    socket.on('setID', function(userID){
+
+        ID = userID;
+    });
     
     var WORDS = [
     "word", "letter", "number", "person", "pen", "class", "people",
@@ -32,6 +38,8 @@ var pictionary = function() {
         $('#top-message .drawerTag').css('display','inline-block');
         $('.drawerTag span').text(randomWord);
         $('#top-message #guess').css('display','none');
+        context.clearRect(0,0,canvas[0].width,canvas[0].height);
+
     };
     
     //The guesserReset also resets the userGuesses div and displays the make a guess input. This tells the user
@@ -41,6 +49,8 @@ var pictionary = function() {
         $('.userGuesses').empty();
         $('#top-message #guess').css('display','inline-block');
         $('#top-message .drawerTag').css('display','none');
+        context.clearRect(0,0,canvas[0].width,canvas[0].height);
+
     };
 
     //The userTypeCheck listener gets the type parameter from the server and declares the clients userType variable.
@@ -59,9 +69,28 @@ var pictionary = function() {
         //This clientToServerWordCheck listener sends an object to the server containing the userType and randomWord.
         socket.emit('clientToServerWordCheck',{drawer:userType, word:randomWord});
 
-        
     });
     
+
+    //The serverToClientDrawerCheck listener will have a function which emits the userType back to the server.
+    socket.on('serverToClientDrawerCheck', function(){
+            socket.emit('testTwo',userType);
+
+    });
+    
+    //addNewDrawer and resetGuessers are listeners to restart the game and add a new drawer when the previous drawer so happens
+    //to leave the game.
+    socket.on('addNewDrawer', function(addDrawer){
+        userType = addDrawer;
+        drawerReset();
+        socket.emit('clientToServerWordCheck',{drawer:userType, word:randomWord});
+
+    });
+    
+    socket.on('resetGuessers', function(){
+        guesserReset();
+        
+    });
     
 
     //function for the enter click. This click is only available to the guesser and not the drawer.
@@ -166,7 +195,12 @@ var pictionary = function() {
     //This serverToClient listener will use the draw function when it is emmited. Which
     //will be in the server due to the mousemove event.
     socket.on('serverToClient', draw);
+    
 
+
+
+//Make a disconnection function where after every disconnect. All clients are checked to see if the drawer is still connected.
+//If the drawer is not connected then make the last guesser that connected the drawer.
 };
 
 $(document).ready(function() {
