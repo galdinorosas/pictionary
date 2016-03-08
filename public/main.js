@@ -7,9 +7,9 @@ var pictionary = function() {
     var initialGuess;
     var randomWord;
     var ID;
+    var guesserCount = 0;
     
     socket.on('setID', function(userID){
-
         ID = userID;
     });
     
@@ -29,7 +29,6 @@ var pictionary = function() {
     "space"
     ];
     
-    // var randomWord = WORDS[Math.floor(Math.random() * WORDS.length)];
     //drawerReset function clears the userGuesses div and displays the drawerTag showing the user it is
     //their turn to draw the displayed word.
     var drawerReset = function(){
@@ -44,13 +43,11 @@ var pictionary = function() {
     
     //The guesserReset also resets the userGuesses div and displays the make a guess input. This tells the user
     //it is their turn to make a guess.
-    
     var guesserReset = function(){
         $('.userGuesses').empty();
         $('#top-message #guess').css('display','inline-block');
         $('#top-message .drawerTag').css('display','none');
         context.clearRect(0,0,canvas[0].width,canvas[0].height);
-
     };
 
     //The userTypeCheck listener gets the type parameter from the server and declares the clients userType variable.
@@ -70,12 +67,11 @@ var pictionary = function() {
         socket.emit('clientToServerWordCheck',{drawer:userType, word:randomWord});
 
     });
-    
 
     //The serverToClientDrawerCheck listener will have a function which emits the userType back to the server.
     socket.on('serverToClientDrawerCheck', function(){
-            socket.emit('testTwo',userType);
 
+            socket.emit('drawerHere',userType);
     });
     
     //addNewDrawer and resetGuessers are listeners to restart the game and add a new drawer when the previous drawer so happens
@@ -102,14 +98,11 @@ var pictionary = function() {
         }
         
         if(userType===false){
-        initialGuess = guessBox.val();
+            initialGuess = guessBox.val();
+        
+            socket.emit('guessToServer', {guess:guessBox.val()});
     
-        console.log(guessBox.val());
-        
-        socket.emit('guessToServer', {guess:guessBox.val()});
-
-        
-        guessBox.val('');
+            guessBox.val('');
         }
 
     };
@@ -134,7 +127,6 @@ var pictionary = function() {
                 userType = false;
                 guesserReset();
                 context.clearRect(0,0,canvas[0].width,canvas[0].height);
-
         }
         
         //If the user guesses correctly then an object will return that contains both the guess and word
@@ -151,12 +143,9 @@ var pictionary = function() {
         }
     });
     
-
     guessBox = $('input');
     guessBox.on('keydown', onKeyDown);
 
-    
-    
     //function to draw on the canvas/context.
     var draw = function(position) {
         context.beginPath();
@@ -191,13 +180,9 @@ var pictionary = function() {
         
     });
     
-    
     //This serverToClient listener will use the draw function when it is emmited. Which
     //will be in the server due to the mousemove event.
     socket.on('serverToClient', draw);
-    
-
-
 
 //Make a disconnection function where after every disconnect. All clients are checked to see if the drawer is still connected.
 //If the drawer is not connected then make the last guesser that connected the drawer.
