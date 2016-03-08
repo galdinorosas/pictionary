@@ -71,18 +71,9 @@ io.on('connection', function(socket){
         socket.broadcast.emit('serverToClientDrawerCheck');
 
     });
-    //The client emmited a testTwo listner with the userType data. All the clients still connected after the disconnection
-    //will go run the testTwo listener. The variable drawerHere is a global variable that is originally false.
-    //As all the remaining clients run the testTwo listener, if any of the clients are the drawer then the global variable
-    //drawerHere will be set to true.
-    
-    //Another set of if statments wait till the  drawerCheckCount matches the totalUsers and to compare drawerHere boolean value.
-    //At the end of all the remaining clients emmitting the testTwo listener, if there original drawer is still playing
-    //then the game will go on. If the drawer is the client that left, then drawerHere will be false and a new drawer will be added.
+   
     socket.on('drawerHere', function(clientToServerDrawerCheck){
         drawerCheckCount++;
-        // console.log(clientToServerDrawerCheck);
-        
         // set drawer exist if any client is a drawer
         if(clientToServerDrawerCheck === true){
             drawerHere = true;
@@ -94,7 +85,6 @@ io.on('connection', function(socket){
             // if there is a drawer
             if(drawerHere===true){
                 drawerCheckCount = 0;
-                console.log('working fine');
             }
             else{
                 drawerCheckCount = 0;
@@ -107,14 +97,11 @@ io.on('connection', function(socket){
                     }
                 }
             }
+            
             drawerHere = false;
         }
         
-
     });
-    
-
-
     
 });
 
