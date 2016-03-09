@@ -2,7 +2,6 @@
 <title>Pictionary</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
 <!-- CSS -->
 <style>
 * {
@@ -16,14 +15,13 @@ body {
 }
 
 #guess,
-.drawerTag{
-    display : none;
+.drawerTag {
+    display: none;
 }
-
 
 h1 {
     background-color: #9ABBFF;
-    margin:  0 0 20px 0;
+    margin: 0 0 20px 0;
     padding: 20px;
     text-align: center;
 }
@@ -41,18 +39,17 @@ canvas {
     margin: 0 auto;
 }
 </style>
-
 <!-- JS -->
 <script src="//code.jquery.com/jquery-2.1.0.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.3.0/handlebars.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="main.js"></script>
-
 <div id="main">
     <h1>Pictionary</h1>
     <div id="top-message">
         <div id="guess">
-            Make a guess: <input type="text">
+            Make a guess:
+            <input type="text">
         </div>
         <div class="drawerTag">You are the drawer! This is your word = <span></span></div>
     </div>
