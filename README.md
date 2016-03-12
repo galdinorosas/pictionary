@@ -41,7 +41,7 @@
 
        *Paste the url into more browsers to add   guessers.
    
-1. THATS IT! The application should be running now, take a look.
+5. THATS IT! The application should be running now, take a look.
 -------
 ### Application Images
   * If the application is running properly, then you should be seeing the app looking like the images below.
