@@ -21,18 +21,25 @@ io.on('connection', function(socket) {
 
     socket.emit('setID', socket.id);
 
+
     previousTotalUsers = totalUsers;
 
     totalUsers++;
+    socket.broadcast.emit('playerJoined', totalUsers);
 
+    // serverUserType helps to determine the drawer in this game. Only the first person that
+    // joins the server will be considered the drawer or serverUserType = true.
     if (totalUsers > 1) {
         serverUserType = false;
     } else {
         serverUserType = true;
     }
 
+    // This listener will specify if the connected user is a drawer or not.
     socket.emit('userTypeCheck', serverUserType);
 
+    // This listener will receive the userType and random word from every user, but
+    // only the drawer's word will be saved.
     socket.on('clientToServerWordCheck', function(wordCheckObject) {
         if (wordCheckObject.drawer) {
             drawerWord = wordCheckObject.word;
@@ -59,6 +66,7 @@ io.on('connection', function(socket) {
         usersArray = [io.sockets.clients()];
         connectedUsersArray = Object.getOwnPropertyNames(usersArray[0].server.nsps['/'].sockets);
         //When a user disconnects I will be emitting the serverToClientDrawerCheck listener.
+        socket.broadcast.emit('playerLeft', totalUsers);
         socket.broadcast.emit('serverToClientDrawerCheck');
 
     });
@@ -85,10 +93,12 @@ io.on('connection', function(socket) {
                     }
                 }
             }
-            
+
             drawerHere = false;
         }
     });
 });
 
-server.listen(8080);
+server.listen(8080, function() {
+  console.log('Please navigate to http://localhost:8080');
+});

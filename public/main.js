@@ -13,6 +13,18 @@ var pictionary = function() {
         ID = userID;
     });
 
+    socket.on('playerJoined', function(totalUsers) {
+        $('.totalPlayers').text(totalUsers);
+        $('.playerJoined').fadeIn(1000, 'linear').delay(1000).fadeOut(1000, 'linear');
+    });
+
+    socket.on('playerLeft', function(totalUsers) {
+        $('.totalPlayers').text(totalUsers);
+        $('.playerLeft').fadeIn(1000, 'linear').delay(1000).fadeOut(1000, 'linear');
+
+    });
+
+
     var WORDS = [
         "word", "letter", "number", "person", "pen", "class", "people",
         "sound", "water", "side", "place", "man", "men", "woman", "women", "boy",
@@ -87,7 +99,6 @@ var pictionary = function() {
 
     });
 
-
     //function for the enter click. This click is only available to the guesser and not the drawer.
     //The initialGuess variable is assigned to the users guess on every enter click. Then the guessToServer
     //listener emits an object to the server containing the users guess.
@@ -151,7 +162,7 @@ var pictionary = function() {
             6, 0, 2 * Math.PI);
         context.fill();
     };
-    
+
     //drawing boolean is used to determine when to draw if the user clicks down.
     var drawing = false;
     canvas = $('canvas');
@@ -184,7 +195,6 @@ var pictionary = function() {
 
     //This serverToClient listener will use the draw function when it is emmited. Which
     //will be in the server due to the mousemove event.
-
     socket.on('serverToClient', draw);
 
 };
